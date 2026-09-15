@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "ui-sans-serif", "system-ui", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  @apply text-slate-900 bg-slate-50 antialiased;
+}
+
+/* Print / PDF Export Styling */
+@media print {
+  /* Hide standard page elements */
+  body > * {
+    visibility: hidden !important;
+  }
+
+  /* Make printable modal and receipt card visible */
+  .printable-modal, .printable-modal *, #printable-receipt, #printable-receipt * {
+    visibility: visible !important;
+  }
+
+  #printable-receipt {
+    position: fixed !important;
+    left: 50% !important;
+    top: 20px !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+    max-width: 680px !important;
+    margin: 0 !important;
+    padding: 32px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 16px !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    z-index: 9999999 !important;
+  }
+
+  /* Explicitly hide buttons, overlays, and controls during print */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Force exact background colors and crisp borders in PDF print preview */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
