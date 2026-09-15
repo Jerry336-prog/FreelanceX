@@ -445,27 +445,4 @@ export const reviewService = {
   getAllReviews: async () => (await api.get("/reviews/all")).data,
 };
 
-// ================= DISPUTES API =================
-export const disputeService = {
-  openDispute: async (disputeData) => {
-    const response = await api.post("/disputes", disputeData);
-    return response.data;
-  },
-
-  getDisputes: async (params = {}) => {
-    const response = await api.get("/disputes", { params });
-    return response.data;
-  },
-
-  getDisputeById: async (id) => {
-    const response = await api.get(`/disputes/${id}`);
-    return response.data;
-  },
-
-  resolveDispute: async (id, resolutionData) => {
-    const response = await api.patch(`/disputes/${id}/resolve`, resolutionData);
-    return response.data;
-  },
-};
-
 export default api;

@@ -33,7 +33,7 @@ const MyContracts = () => {
   const activeCount = contracts.filter((c) => c.status === 'active').length;
   const submittedCount = contracts.filter((c) => c.status === 'submitted').length;
   const completedCount = contracts.filter((c) => c.status === 'completed').length;
-  const cancelledCount = contracts.filter((c) => c.status === 'cancelled' || c.status === 'disputed').length;
+  const cancelledCount = contracts.filter((c) => c.status === 'cancelled').length;
 
   const tabs = [
     { id: 'all', label: 'All Contracts', count: contracts.length },
@@ -48,7 +48,7 @@ const MyContracts = () => {
       activeTab === 'all'
         ? true
         : activeTab === 'cancelled'
-        ? c.status === 'cancelled' || c.status === 'disputed'
+        ? c.status === 'cancelled'
         : c.status === activeTab;
 
     const matchesSearch =

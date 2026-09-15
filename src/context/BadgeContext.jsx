@@ -14,7 +14,6 @@ export const BadgeProvider = ({ children }) => {
     contract: false,
     payment: false,
     job: false,
-    dispute: false,
     system: false
   });
 
@@ -60,7 +59,6 @@ export const BadgeProvider = ({ children }) => {
         contract: unreadNotifs.some(n => n.type === 'contract' || n.relatedType === 'Contract'),
         payment: unreadNotifs.some(n => n.type === 'payment' || n.relatedType === 'Payment'),
         job: unreadNotifs.some(n => n.type === 'job' || n.relatedType === 'Job'),
-        dispute: unreadNotifs.some(n => n.type === 'dispute' || n.relatedType === 'Dispute'),
         system: unreadNotifs.some(n => n.type === 'system')
       };
       setUnreadTypes(types);
@@ -109,9 +107,6 @@ export const BadgeProvider = ({ children }) => {
       return !attendedPaths[path];
     }
     if (lowerName.includes('payment') && unreadTypes.payment) {
-      return !attendedPaths[path];
-    }
-    if (lowerName.includes('dispute') && unreadTypes.dispute) {
       return !attendedPaths[path];
     }
     if (lowerName.includes('job') && unreadTypes.job) {

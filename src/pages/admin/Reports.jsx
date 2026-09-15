@@ -46,9 +46,9 @@ const Reports = () => {
   const summaryStats = {
     revenue: [
       { label: 'Total Volume', value: `₦${totalVolume.toLocaleString()}`, icon: <DollarSign className="w-5 h-5" />, color: 'indigo' },
-      { label: 'Platform Contracts', value: totalContracts.toString(), icon: <TrendingUp className="w-5 h-5" />, color: 'green' },
-      { label: 'Active Jobs Value', value: activeJobs.toString(), icon: <BarChart2 className="w-5 h-5" />, color: 'blue' },
-      { label: 'Open Disputes', value: (stats?.disputes?.open || 0).toString(), icon: <DollarSign className="w-5 h-5" />, color: 'orange' },
+      { label: 'Platform Revenue', value: `₦${((totalVolume || 0) * 0.05).toLocaleString()}`, icon: <TrendingUp className="w-5 h-5" />, color: 'green' },
+      { label: 'Platform Contracts', value: totalContracts.toString(), icon: <FileText className="w-5 h-5" />, color: 'blue' },
+      { label: 'Active Jobs Value', value: activeJobs.toString(), icon: <BarChart2 className="w-5 h-5" />, color: 'orange' },
     ],
     users: [
       { label: 'Total Users', value: totalUsers.toLocaleString(), icon: <Users className="w-5 h-5" />, color: 'indigo' },
@@ -66,7 +66,7 @@ const Reports = () => {
       { label: 'Total Contracts', value: totalContracts.toLocaleString(), icon: <FileText className="w-5 h-5" />, color: 'indigo' },
       { label: 'Active in Progress', value: activeContracts.toLocaleString(), icon: <FileText className="w-5 h-5" />, color: 'green' },
       { label: 'Completed', value: Math.max(0, totalContracts - activeContracts).toLocaleString(), icon: <FileText className="w-5 h-5" />, color: 'blue' },
-      { label: 'Disputes Open', value: (stats?.disputes?.open || 0).toString(), icon: <FileText className="w-5 h-5" />, color: 'red' },
+      { label: 'Revision Requests', value: '0', icon: <FileText className="w-5 h-5" />, color: 'purple' },
     ],
   };
 

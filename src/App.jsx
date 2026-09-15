@@ -51,7 +51,6 @@ import AdminJobs from './pages/admin/Jobs';
 import AdminProposals from './pages/admin/Proposals';
 import AdminContracts from './pages/admin/Contracts';
 import AdminPayments from './pages/admin/Payments';
-import AdminDisputes from './pages/admin/Disputes';
 import AdminReports from './pages/admin/Reports';
 import AdminNotifications from './pages/admin/Notifications';
 import AdminSettings from './pages/admin/Settings';
@@ -141,7 +140,6 @@ function App() {
           <Route path="proposals" element={<AdminProposals />} />
           <Route path="contracts" element={<AdminContracts />} />
           <Route path="payments" element={<AdminPayments />} />
-          <Route path="disputes" element={<AdminDisputes />} />
           <Route path="reports" element={<AdminReports />} />
           <Route path="notifications" element={<AdminNotifications />} />
           <Route path="settings" element={<AdminSettings />} />

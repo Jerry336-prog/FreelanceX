@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Tabs from '../../components/ui/Tabs';
 import StatusBadge from '../../components/ui/StatusBadge';
-import { Clock, DollarSign, Loader2, AlertCircle, FileText, ArrowRight, XCircle, X } from 'lucide-react';
+import { Clock, DollarSign, Loader2, AlertCircle, FileText, ArrowRight, X, LayoutGrid, List } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { proposalService } from '../../services/api';
 
@@ -42,6 +42,16 @@ const MyProposals = () => {
   const [error, setError] = useState('');
   const [withdrawingId, setWithdrawingId] = useState(null);
   const [withdrawModal, setWithdrawModal] = useState({ isOpen: false, proposalId: null });
+  const [viewMode, setViewMode] = useState('grid');
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false));
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const activeViewMode = isMobile ? 'list' : viewMode;
 
   const fetchProposals = useCallback(async () => {
     setLoading(true);
@@ -98,7 +108,7 @@ const MyProposals = () => {
   });
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
+    <div className="max-w-6xl mx-auto space-y-6 pb-12">
       <ConfirmModal
         isOpen={withdrawModal.isOpen}
         title="Withdraw Proposal?"
@@ -154,90 +164,162 @@ const MyProposals = () => {
             </Link>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100">
-            {filteredProposals.map((proposal) => {
-              const proposalId = proposal._id || proposal.id;
-              const job = proposal.jobId || {};
-              const client = job.clientId || {};
-              const clientName = client.companyName || `${client.firstname || 'Client'} ${client.lastname || ''}`.trim();
-              const dateSubmitted = proposal.createdAt
-                ? new Date(proposal.createdAt).toLocaleDateString(undefined, {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })
-                : 'Recent';
+          <div className="space-y-4 p-4 md:p-6 bg-slate-50/50">
+            <div className="hidden md:flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+              <div className="px-1">
+                <p className="text-sm font-bold text-slate-900">Proposal view</p>
+                <p className="text-xs text-slate-500">Use grid for scanning, or list for detailed review.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('grid')}
+                  className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all ${
+                    activeViewMode === 'grid' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                  Grid
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('list')}
+                  className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all ${
+                    activeViewMode === 'list' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                  List
+                </button>
+              </div>
+            </div>
 
-              return (
-                <div key={proposalId} className="p-6 hover:bg-slate-50 transition-colors flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                  <div className="flex-grow">
-                    <div className="flex items-center gap-3 mb-1.5">
-                      <Link 
-                        to={`/freelancer/jobs/${job._id || ''}`}
-                        className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
-                      >
-                        {job.title || 'Job Proposal'}
-                      </Link>
-                      <StatusBadge status={proposal.status} />
+            <div className={activeViewMode === 'grid' ? 'grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6' : 'space-y-4'}>
+              {filteredProposals.map((proposal) => {
+                const proposalId = proposal._id || proposal.id;
+                const job = proposal.jobId || {};
+                const client = job.clientId || {};
+                const clientName = client.companyName || `${client.firstname || 'Client'} ${client.lastname || ''}`.trim();
+                const dateSubmitted = proposal.createdAt
+                  ? new Date(proposal.createdAt).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  : 'Recent';
+
+                if (activeViewMode === 'list') {
+                  return (
+                    <div key={proposalId} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
+                      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-3 mb-1.5">
+                            <Link to={`/freelancer/jobs/${job._id || ''}`} className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors">
+                              {job.title || 'Job Proposal'}
+                            </Link>
+                            <StatusBadge status={proposal.status} />
+                          </div>
+                          <p className="text-xs font-medium text-slate-500 mb-3">
+                            Client: <strong className="text-slate-700">{clientName || 'Confidential Client'}</strong>
+                          </p>
+                          <p className="text-sm text-slate-600 leading-relaxed line-clamp-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            "{proposal.coverLetter}"
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 lg:w-64 flex-shrink-0">
+                          <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Bid</p>
+                            <p className="text-sm font-bold text-slate-900">₦{Number(proposal.bidAmount || 0).toLocaleString()}</p>
+                          </div>
+                          <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Delivery</p>
+                            <p className="text-sm font-bold text-slate-900">{proposal.deliveryTime || 7} days</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                          <span>Submitted on {dateSubmitted}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {proposal.status === 'accepted' ? (
+                            <Link to="/freelancer/contracts" className="px-4 py-2 rounded-xl bg-green-600 text-xs font-bold text-white hover:bg-green-700 inline-flex items-center gap-1.5">
+                              <span>View Contract</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                          ) : (
+                            <Link to={`/freelancer/jobs/${job._id || ''}`} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 hover:bg-slate-50">
+                              View Job
+                            </Link>
+                          )}
+                          {proposal.status === 'pending' && (
+                            <button onClick={() => openWithdrawModal(proposalId)} disabled={withdrawingId === proposalId} title="Withdraw Proposal" className="px-3 py-2 text-xs font-bold text-slate-500 hover:text-red-600 hover:bg-red-50 border border-slate-200 rounded-xl transition-colors disabled:opacity-50">
+                              {withdrawingId === proposalId ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Withdraw'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    
-                    <p className="text-xs font-medium text-slate-500 mb-3">
-                      Client: <strong className="text-slate-700">{clientName || 'Confidential Client'}</strong>
-                    </p>
-                    
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
-                      <span className="flex items-center font-bold text-slate-800">
-                        <DollarSign className="w-3.5 h-3.5 mr-0.5 text-slate-400" />
-                        ₦{Number(proposal.bidAmount || 0).toLocaleString()}
-                      </span>
-                      <span className="flex items-center">
-                        <Clock className="w-3.5 h-3.5 mr-1 text-slate-400" />
-                        {proposal.deliveryTime || 7} days delivery
-                      </span>
-                      <span>Submitted on {dateSubmitted}</span>
+                  );
+                }
+
+                return (
+                  <div key={proposalId} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 hover:border-blue-200 hover:shadow-md transition-all flex flex-col justify-between gap-5 min-w-0">
+                    <div className="flex-grow">
+                      <div className="flex flex-col gap-2 mb-2">
+                        <Link to={`/freelancer/jobs/${job._id || ''}`} className="text-sm md:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors leading-snug line-clamp-2">
+                          {job.title || 'Job Proposal'}
+                        </Link>
+                        <div>
+                          <StatusBadge status={proposal.status} />
+                        </div>
+                      </div>
+
+                      <p className="text-xs font-medium text-slate-500 mb-3">
+                        Client: <strong className="text-slate-700">{clientName || 'Confidential Client'}</strong>
+                      </p>
+
+                      <div className="flex flex-col gap-2 text-xs text-slate-500">
+                        <span className="flex items-center font-bold text-slate-800">
+                          <DollarSign className="w-3.5 h-3.5 mr-0.5 text-slate-400" />
+                          ₦{Number(proposal.bidAmount || 0).toLocaleString()}
+                        </span>
+                        <span className="flex items-center">
+                          <Clock className="w-3.5 h-3.5 mr-1 text-slate-400" />
+                          {proposal.deliveryTime || 7} days delivery
+                        </span>
+                        <span>Submitted on {dateSubmitted}</span>
+                      </div>
+
+                      <p className="text-slate-600 text-xs mt-3 line-clamp-3 italic bg-slate-50 p-2 rounded-lg border border-slate-100">
+                        "{proposal.coverLetter}"
+                      </p>
                     </div>
 
-                    <p className="text-slate-600 text-xs mt-3 line-clamp-1 italic bg-slate-50 p-2 rounded-lg border border-slate-100 max-w-2xl">
-                      "{proposal.coverLetter}"
-                    </p>
-                  </div>
+                    <div className="flex flex-col gap-2 w-full">
+                      {proposal.status === 'accepted' ? (
+                        <Link to="/freelancer/contracts" className="w-full px-4 py-2.5 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors text-xs shadow-sm flex items-center justify-center gap-1.5">
+                          <span>View Contract</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      ) : (
+                        <Link to={`/freelancer/jobs/${job._id || ''}`} className="w-full px-4 py-2.5 bg-white border border-slate-200 text-slate-800 font-semibold rounded-xl hover:bg-slate-50 transition-colors text-xs shadow-sm text-center">
+                          View Job
+                        </Link>
+                      )}
 
-                  <div className="flex items-center gap-3 w-full lg:w-auto">
-                    {proposal.status === 'accepted' ? (
-                      <Link 
-                        to="/freelancer/contracts"
-                        className="px-5 py-2.5 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors text-xs shadow-sm flex items-center gap-1.5"
-                      >
-                        <span>View Contract</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    ) : (
-                      <Link 
-                        to={`/freelancer/jobs/${job._id || ''}`}
-                        className="px-4 py-2 bg-white border border-slate-200 text-slate-800 font-semibold rounded-xl hover:bg-slate-50 transition-colors text-xs shadow-sm"
-                      >
-                        View Job
-                      </Link>
-                    )}
-
-                    {proposal.status === 'pending' && (
-                      <button
-                        onClick={() => openWithdrawModal(proposalId)}
-                        disabled={withdrawingId === proposalId}
-                        title="Withdraw Proposal"
-                        className="px-3 py-2 text-xs font-bold text-slate-500 hover:text-red-600 hover:bg-red-50 border border-slate-200 rounded-xl transition-colors disabled:opacity-50"
-                      >
-                        {withdrawingId === proposalId ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        ) : (
-                          'Withdraw'
-                        )}
-                      </button>
-                    )}
+                      {proposal.status === 'pending' && (
+                        <button onClick={() => openWithdrawModal(proposalId)} disabled={withdrawingId === proposalId} title="Withdraw Proposal" className="w-full px-3 py-2 text-xs font-bold text-slate-500 hover:text-red-600 hover:bg-red-50 border border-slate-200 rounded-xl transition-colors disabled:opacity-50">
+                          {withdrawingId === proposalId ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Withdraw'}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
       </div>

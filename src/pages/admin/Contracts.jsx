@@ -90,7 +90,6 @@ const Contracts = () => {
             <option value="submitted">Submitted</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
-            <option value="disputed">Disputed</option>
           </select>
         </div>
 

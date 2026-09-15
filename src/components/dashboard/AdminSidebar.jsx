@@ -30,7 +30,6 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
     { name: 'Proposals', path: '/admin/proposals', icon: <FileText className="w-5 h-5" /> },
     { name: 'Contracts', path: '/admin/contracts', icon: <FileText className="w-5 h-5" /> },
     { name: 'Payments', path: '/admin/payments', icon: <CreditCard className="w-5 h-5" /> },
-    { name: 'Disputes', path: '/admin/disputes', icon: <AlertTriangle className="w-5 h-5" /> },
     { name: 'Reports', path: '/admin/reports', icon: <BarChart2 className="w-5 h-5" /> },
     { name: 'Notifications', path: '/admin/notifications', icon: <Bell className="w-5 h-5" /> },
     { name: 'Settings', path: '/admin/settings', icon: <Settings className="w-5 h-5" /> },

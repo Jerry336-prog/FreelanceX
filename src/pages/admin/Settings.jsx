@@ -47,7 +47,6 @@ const AdminSettings = () => {
     serviceFee: 10,
     allowFreelancerSignup: true,
     allowClientSignup: true,
-    disputeSystem: true,
     maintenanceMode: false,
   });
 
@@ -266,7 +265,6 @@ const AdminSettings = () => {
                   {[
                     { key: 'allowFreelancerSignup', label: 'Allow new freelancer registrations' },
                     { key: 'allowClientSignup', label: 'Allow new client registrations' },
-                    { key: 'disputeSystem', label: 'Enable milestone dispute system' },
                     { key: 'maintenanceMode', label: 'Maintenance mode (disable all public routes)' },
                   ].map((flag) => (
                     <div key={flag.key} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">

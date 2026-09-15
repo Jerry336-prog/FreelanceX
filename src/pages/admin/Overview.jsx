@@ -64,7 +64,6 @@ const Overview = () => {
         { label: 'Active Contracts', value: String(s.contracts?.active ?? 0), subtext: `${s.contracts?.total ?? 0} total`, icon: <FileText className="w-5 h-5" />, color: 'blue' },
         { label: 'Total Volume', value: fmt(s.financials?.totalVolume), subtext: 'Released payments', icon: <DollarSign className="w-5 h-5" />, color: 'green' },
         { label: 'Platform Revenue', value: fmt((s.financials?.totalVolume || 0) * 0.05), subtext: '~5% service fee', icon: <TrendingUp className="w-5 h-5" />, color: 'indigo' },
-        { label: 'Open Disputes', value: String(s.disputes?.open ?? 0), subtext: 'Needs attention', icon: <AlertTriangle className="w-5 h-5" />, color: 'red' },
       ]
     : [];
 
@@ -177,7 +176,6 @@ const Overview = () => {
             <h2 className="text-base font-bold text-slate-900 mb-4">Quick Actions</h2>
             {[
               { label: 'Manage Users', to: '/admin/users', color: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100' },
-              { label: 'Review Disputes', to: '/admin/disputes', color: 'bg-red-50 text-red-700 hover:bg-red-100' },
               { label: 'Platform Jobs', to: '/admin/jobs', color: 'bg-green-50 text-green-700 hover:bg-green-100' },
               { label: 'All Contracts', to: '/admin/contracts', color: 'bg-blue-50 text-blue-700 hover:bg-blue-100' },
               { label: 'Payment Records', to: '/admin/payments', color: 'bg-purple-50 text-purple-700 hover:bg-purple-100' },
