@@ -104,7 +104,7 @@ const MyContracts = () => {
             <p className="text-slate-400 text-xs mt-1">When clients accept your proposals, active contracts will appear here.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-slate-50/50">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 p-4 md:p-6 bg-slate-50/50">
             {filteredContracts.map((contract) => {
               const contractId = contract._id || contract.id;
               const client = contract.clientId || {};
@@ -119,7 +119,7 @@ const MyContracts = () => {
                 : 'Flexible';
 
               return (
-                <div key={contractId} className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-md hover:border-blue-200 transition-all flex flex-col justify-between h-full shadow-sm">
+                <div key={contractId} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 hover:shadow-md hover:border-blue-200 transition-all flex flex-col justify-between h-full shadow-sm">
                   <div>
                     <div className="flex justify-between items-start mb-4">
                       <StatusBadge status={contract.status} />
@@ -134,7 +134,7 @@ const MyContracts = () => {
                       </span>
                     </div>
                     
-                    <h3 className="font-bold text-base text-slate-900 line-clamp-2 mb-1">
+                    <h3 className="font-bold text-sm md:text-base text-slate-900 line-clamp-2 mb-1">
                       {contract.title}
                     </h3>
                     <p className="text-xs font-semibold text-slate-500 mb-6">Client: {clientName}</p>

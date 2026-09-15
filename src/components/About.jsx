@@ -57,17 +57,17 @@ const About = () => {
           </div>
 
           <div className="lg:col-span-7">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6">
               {features.map((feature, index) => (
                 <div 
                   key={index} 
-                  className={`bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors ${index === 0 ? 'sm:col-span-2' : ''}`}
+                  className={`bg-white/5 border border-white/10 p-4 sm:p-6 rounded-2xl hover:bg-white/10 transition-colors ${index === 0 ? 'sm:col-span-2' : ''}`}
                 >
                   <div className="w-10 h-10 bg-blue-500/20 text-blue-400 rounded-lg flex items-center justify-center mb-4">
                     {React.cloneElement(feature.icon, { size: 20 })}
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">{feature.description}</p>
+                  <h3 className="text-sm sm:text-xl font-bold mb-2 leading-snug">{feature.title}</h3>
+                  <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">{feature.description}</p>
                 </div>
               ))}
             </div>

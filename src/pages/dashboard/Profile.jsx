@@ -536,7 +536,7 @@ const Profile = () => {
                 </form>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 {portfolio.length === 0 ? (
                   <div className="col-span-2 py-8 text-center border-2 border-dashed border-slate-200 rounded-2xl">
                     <p className="text-sm text-slate-500 font-medium">No portfolio projects added yet.</p>

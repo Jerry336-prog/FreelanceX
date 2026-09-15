@@ -1,8 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, MessageSquare, CheckCircle, Clock, FileText, DollarSign, Calendar, ShieldCheck, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
+import { 
+  ArrowLeft, MessageSquare, CheckCircle, Clock, FileText, DollarSign, Calendar, ShieldCheck, 
+  Loader2, AlertCircle, ExternalLink, Paperclip, Eye, Download, X, Image as ImageIcon 
+} from 'lucide-react';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { contractService } from '../../services/api';
+
+const isImageAttachment = (attObj) => {
+  if (!attObj) return false;
+  if (typeof attObj === 'object') {
+    if (attObj.isImage) return true;
+    if (attObj.type && attObj.type.startsWith('image/')) return true;
+    if (attObj.resource_type === 'image') return true;
+    if (attObj.url && isImageAttachment(attObj.url)) return true;
+    if (attObj.name && isImageAttachment(attObj.name)) return true;
+  }
+  if (typeof attObj === 'string') {
+    const s = attObj.toLowerCase();
+    if (s.startsWith('data:image/')) return true;
+    if (s.startsWith('blob:')) return true;
+    if (s.includes('/image/upload/')) return true;
+    if (s.match(/\.(jpeg|jpg|gif|png|webp|svg|avif|bmp|tiff)($|\?)/i)) return true;
+  }
+  return false;
+};
+
+const isPdfAttachment = (attObj) => {
+  if (!attObj) return false;
+  if (typeof attObj === 'object') {
+    if (attObj.name && attObj.name.toLowerCase().endsWith('.pdf')) return true;
+    if (attObj.type === 'application/pdf') return true;
+    if (attObj.url && isPdfAttachment(attObj.url)) return true;
+  }
+  if (typeof attObj === 'string') {
+    const s = attObj.toLowerCase();
+    if (s.match(/\.pdf($|\?)/i)) return true;
+    if (s.includes('/raw/upload/') && s.includes('pdf')) return true;
+  }
+  return false;
+};
+
+const handleDownloadFile = async (url, fileName) => {
+  if (!url) return;
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = fileName || 'deliverable_document.pdf';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(blobUrl);
+  } catch (err) {
+    window.open(url, '_blank');
+  }
+};
 
 const ContractDetails = () => {
   const { id } = useParams();
@@ -13,6 +68,7 @@ const ContractDetails = () => {
   const [error, setError] = useState('');
   const [confirming, setConfirming] = useState(false);
   const [confirmSuccess, setConfirmSuccess] = useState(false);
+  const [previewMedia, setPreviewMedia] = useState(null);
 
   useEffect(() => {
     const fetchContract = async () => {
@@ -253,19 +309,80 @@ const ContractDetails = () => {
                   {contract.status === 'completed' ? 'Approved' : 'Under Review'}
                 </span>
               </div>
-              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap bg-slate-50 p-4 rounded-xl border border-slate-100 break-words break-all [overflow-wrap:anywhere] overflow-hidden">
-                {workSubmissionData.description}
-              </p>
+
+              {workSubmissionData.description && (
+                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap bg-slate-50 p-4 rounded-xl border border-slate-100 overflow-hidden">
+                  {workSubmissionData.description}
+                </p>
+              )}
+
               {workSubmissionData.stagingUrl && (
                 <a
                   href={workSubmissionData.stagingUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-blue-600 font-semibold hover:underline break-all max-w-full overflow-hidden"
+                  className="inline-flex items-center gap-1.5 text-xs text-blue-600 font-semibold hover:underline max-w-full overflow-hidden"
                 >
                   <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
                   <span className="truncate">{workSubmissionData.stagingUrl}</span>
                 </a>
+              )}
+
+              {/* Submitted Files List */}
+              {Array.isArray(workSubmissionData.files) && workSubmissionData.files.length > 0 && (
+                <div className="pt-3 border-t border-slate-100 space-y-2.5">
+                  <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Submitted Deliverable Files ({workSubmissionData.files.length})</p>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {workSubmissionData.files.map((fileItem, fileIdx) => {
+                      const fileUrl = typeof fileItem === 'string' ? fileItem : fileItem?.url || fileItem?.path || '';
+                      const fileName = (typeof fileItem === 'object' && fileItem?.name)
+                        ? fileItem.name
+                        : (fileUrl.split('/').pop().split('?')[0] || `Deliverable_${fileIdx + 1}`);
+
+                      const isImg = isImageAttachment(fileUrl) || isImageAttachment(fileItem);
+                      const isPdf = isPdfAttachment(fileUrl) || isPdfAttachment(fileItem);
+
+                      return (
+                        <div
+                          key={fileIdx}
+                          className="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100/90 transition-all text-xs group"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                            {isImg ? (
+                              <ImageIcon className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                            ) : isPdf ? (
+                              <FileText className="w-4 h-4 text-red-500 flex-shrink-0" />
+                            ) : (
+                              <Paperclip className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                            )}
+                            <span className="font-semibold text-slate-800 truncate max-w-[150px]" title={fileName}>
+                              {fileName}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setPreviewMedia({ url: fileUrl, type: isImg ? 'image' : (isPdf ? 'pdf' : 'doc'), title: fileName })}
+                              className="px-2.5 py-1 bg-white border border-slate-200 text-slate-700 hover:text-blue-600 hover:border-blue-300 rounded-lg transition-colors font-semibold flex items-center gap-1 shadow-xs text-xs"
+                              title="View file"
+                            >
+                              <Eye className="w-3.5 h-3.5" /> View
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDownloadFile(fileUrl, fileName)}
+                              className="p-1.5 text-slate-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                              title="Download file"
+                            >
+                              <Download className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </div>
           )}
@@ -345,6 +462,81 @@ const ContractDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Centered Media & Document Lightbox Modal ── */}
+      {previewMedia && (
+        <div
+          className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 md:p-6 animate-in fade-in"
+          onClick={() => setPreviewMedia(null)}
+        >
+          <div
+            className="relative bg-white border border-slate-200 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50 flex-shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0 pr-4">
+                {previewMedia.type === 'image' ? (
+                  <Eye className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                ) : (
+                  <FileText className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                )}
+                <h3 className="font-bold text-slate-900 text-sm truncate">
+                  {previewMedia.title || 'Deliverable Preview'}
+                </h3>
+              </div>
+
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleDownloadFile(previewMedia.url, previewMedia.title)}
+                  className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl transition-colors flex items-center gap-1.5 shadow-xs"
+                >
+                  <Download className="w-3.5 h-3.5" /> Download
+                </button>
+                <a
+                  href={previewMedia.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 rounded-lg transition-colors"
+                  title="Open in new tab"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+                <button
+                  onClick={() => setPreviewMedia(null)}
+                  className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 rounded-lg transition-colors ml-1"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Body Content */}
+            <div className="p-6 overflow-auto flex-1 flex items-center justify-center bg-slate-950/5 min-h-[350px]">
+              {previewMedia.type === 'image' || isImageAttachment(previewMedia.url) ? (
+                <img
+                  src={previewMedia.url}
+                  alt={previewMedia.title || 'Preview'}
+                  className="max-w-full max-h-[72vh] object-contain rounded-xl shadow-lg border border-slate-200"
+                />
+              ) : previewMedia.type === 'pdf' || isPdfAttachment(previewMedia.url) ? (
+                <iframe
+                  src={previewMedia.url}
+                  className="w-full h-[72vh] rounded-xl border border-slate-200 shadow-sm"
+                  title="PDF Document Preview"
+                />
+              ) : (
+                <iframe
+                  src={`https://docs.google.com/viewer?url=${encodeURIComponent(previewMedia.url)}&embedded=true`}
+                  className="w-full h-[72vh] rounded-xl border border-slate-200 shadow-sm"
+                  title="Document Preview"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

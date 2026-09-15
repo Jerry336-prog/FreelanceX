@@ -263,6 +263,7 @@ const ViewProposals = () => {
       ) : (
         <div className="space-y-6">
           {proposals.map((proposal) => {
+            const proposalId = proposal._id || proposal.id;
             const freelancer = typeof proposal.freelancerId === 'object' && proposal.freelancerId !== null ? proposal.freelancerId : {};
             const freelancerIdStr = typeof proposal.freelancerId === 'string' ? proposal.freelancerId : (freelancer._id || freelancer.id || '');
             const fullName = `${freelancer.firstname || 'Freelancer'} ${freelancer.lastname || ''}`.trim();
@@ -400,7 +401,7 @@ const ViewProposals = () => {
                           <Paperclip className="w-4 h-4 text-blue-600" />
                           Attached Documents ({attachments.length})
                         </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div className="grid grid-cols-2 gap-2.5">
                           {attachments.map((fileUrl, index) => {
                             const fileName = getFileName(fileUrl);
                             const fileIcon = getFileIcon(fileUrl);

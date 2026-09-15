@@ -4,7 +4,7 @@ import { ArrowRight, Search, Star } from 'lucide-react';
   
 const Hero = () => {
   return (
-    <section className="relative bg-white pt-20 pb-32 overflow-hidden">
+    <section className="relative bg-white pt-16 pb-20 md:pt-20 md:pb-32 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30"></div>
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-50 blur-3xl opacity-70"></div>
@@ -13,18 +13,18 @@ const Hero = () => {
         <div className="lg:grid lg:grid-cols-12 lg:gap-16 items-center">
           
           {/* Text Content */}
-          <div className="lg:col-span-6 text-center lg:text-left mb-16 lg:mb-0">
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-semibold mb-6 border border-blue-100">
+          <div className="lg:col-span-6 text-center lg:text-left mb-12 lg:mb-0">
+            <div className="inline-flex max-w-full items-center px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs sm:text-sm font-semibold mb-6 border border-blue-100">
               <Star className="w-4 h-4 mr-2 fill-current" />
               #1 Freelance Marketplace
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-[1.1] mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-[1.12] mb-6">
               Find the right talent. <br />
               <span className="text-blue-600">Get great work done.</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto lg:mx-0">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 mb-8 sm:mb-10 max-w-2xl mx-auto lg:mx-0">
               Connect with a community of independent professionals and agencies to bring your ideas to life. From quick tasks to complex projects.
             </p>
             
@@ -39,9 +39,9 @@ const Hero = () => {
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex items-center justify-center lg:justify-start gap-4 text-sm font-medium text-slate-500">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-sm font-medium text-slate-500">
               <span>Trusted by 2,000+ companies</span>
-              <div className="h-4 w-px bg-slate-300"></div>
+              <div className="hidden sm:block h-4 w-px bg-slate-300"></div>
               <div className="flex -space-x-2">
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="w-8 h-8 rounded-full bg-slate-200 border-2 border-white overflow-hidden">
@@ -58,10 +58,10 @@ const Hero = () => {
               <img 
                 src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
                 alt="Freelancer working on a laptop" 
-                className="rounded-xl object-cover h-[400px] w-full opacity-90"
+                className="rounded-xl object-cover h-[280px] sm:h-[340px] lg:h-[400px] w-full opacity-90"
               />
               {/* Floating Cards */}
-              <div className="absolute -bottom-8 -left-8 bg-white p-4 rounded-xl shadow-xl border border-slate-100 flex items-center gap-4 animate-bounce" style={{ animationDuration: '3s' }}>
+              <div className="absolute -bottom-5 left-3 sm:-bottom-8 sm:-left-8 bg-white p-3 sm:p-4 rounded-xl shadow-xl border border-slate-100 flex items-center gap-3 sm:gap-4 animate-bounce" style={{ animationDuration: '3s' }}>
                 <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
                   <Star className="w-6 h-6 text-green-600 fill-current" />
                 </div>
@@ -71,7 +71,7 @@ const Hero = () => {
                 </div>
               </div>
 
-              <div className="absolute top-12 -right-8 bg-white p-4 rounded-xl shadow-xl border border-slate-100">
+              <div className="absolute top-6 right-3 sm:top-12 sm:-right-8 bg-white p-3 sm:p-4 rounded-xl shadow-xl border border-slate-100">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-full overflow-hidden">
                     <img src="https://i.pravatar.cc/100?img=5" alt="Sarah" />

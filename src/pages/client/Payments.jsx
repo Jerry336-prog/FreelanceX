@@ -156,22 +156,22 @@ const ClientPayments = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
-          <div className="flex gap-3">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 md:p-5">
+          <div className="flex flex-col sm:flex-row gap-3">
             <ShieldCheck className="h-6 w-6 flex-shrink-0 text-blue-600" />
             <div>
-              <p className="font-bold text-slate-900">Secure Paystack checkout</p>
-              <p className="mt-1 text-sm leading-6 text-slate-600">When a payment is due, click Pay with Paystack. Paystack securely collects your payment details—FreelanceX never stores them.</p>
+              <p className="text-sm md:text-base font-bold text-slate-900 leading-snug">Secure Paystack checkout</p>
+              <p className="mt-1 text-xs md:text-sm leading-5 md:leading-6 text-slate-600">When a payment is due, click Pay with Paystack. Paystack securely collects your payment details—FreelanceX never stores them.</p>
             </div>
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-          <div className="flex gap-3">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 md:p-5">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Landmark className="h-6 w-6 flex-shrink-0 text-slate-700" />
             <div>
-              <p className="font-bold text-slate-900">Choose a method at checkout</p>
-              <p className="mt-1 text-sm leading-6 text-slate-600">Use card, bank transfer, USSD, or another option presented by Paystack. Generated receipts can be sent in project chat.</p>
+              <p className="text-sm md:text-base font-bold text-slate-900 leading-snug">Choose a method at checkout</p>
+              <p className="mt-1 text-xs md:text-sm leading-5 md:leading-6 text-slate-600">Use card, bank transfer, USSD, or another option presented by Paystack. Generated receipts can be sent in project chat.</p>
             </div>
           </div>
         </div>
