@@ -259,8 +259,9 @@ export const paymentService = {
     return response.data?.data || {};
   },
 
-  initializePaystackPayment: async (contractId) => {
-    const response = await api.post("/payments/initialize", { contractId });
+  initializePaystackPayment: async (contractId, extraData = {}) => {
+    const callbackUrl = typeof window !== 'undefined' ? `${window.location.origin}/client/payments` : undefined;
+    const response = await api.post("/payments/initialize", { contractId, callbackUrl, ...extraData });
     return response.data?.data;
   },
 

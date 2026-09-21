@@ -54,9 +54,11 @@ const ClientPayments = () => {
     loadData();
   }, [loadData]);
 
+  const [verifyingId, setVerifyingId] = useState(null);
+
   // Handle Paystack payment verification return callback
   useEffect(() => {
-    const reference = searchParams.get('reference') || searchParams.get('paymentReference');
+    const reference = searchParams.get('reference') || searchParams.get('paymentReference') || searchParams.get('trxref');
     if (!reference) return;
 
     paymentService.verifyPaystackPayment(reference)
@@ -77,6 +79,31 @@ const ClientPayments = () => {
       .catch((err) => setError(err?.message || 'We could not verify the Paystack payment yet.'))
       .finally(() => setSearchParams({}, { replace: true }));
   }, [loadData, searchParams, setSearchParams]);
+
+  const verifyPaymentRecord = async (trx) => {
+    const ref = trx.transactionReference || trx._id || trx.id;
+    setVerifyingId(ref);
+    setError('');
+    try {
+      const res = await paymentService.verifyPaystackPayment(ref);
+      loadData();
+      const payData = res?.data || res;
+      setVerifiedReceipt({
+        reference: ref,
+        amount: payData.amount || trx.amount || 0,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        contractTitle: payData.contractId?.title || trx.contractId?.title || 'Contract Settlement',
+        freelancer: payData.freelancerId || trx.freelancerId,
+        freelancerId: extractId(payData.freelancerId || trx.freelancerId),
+        contractId: extractId(payData.contractId || trx.contractId),
+      });
+    } catch (err) {
+      setError(err?.message || 'Could not verify payment status with Paystack.');
+    } finally {
+      setVerifyingId(null);
+    }
+  };
 
   const startPayment = async () => {
     if (!contractToFund) return;
@@ -432,13 +459,28 @@ const ClientPayments = () => {
                             -₦{Number(trx.amount || 0).toLocaleString()}
                           </td>
                           <td className="px-6 py-4 text-right">
-                            <button
-                              onClick={() => openReceiptForPayment(trx)}
-                              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg inline-flex items-center gap-1 transition-colors"
-                            >
-                              <FileText className="w-3.5 h-3.5" />
-                              View Receipt
-                            </button>
+                            {trx.status === 'pending' ? (
+                              <button
+                                disabled={verifyingId === (trx.transactionReference || trx._id || trx.id)}
+                                onClick={() => verifyPaymentRecord(trx)}
+                                className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-semibold rounded-lg inline-flex items-center gap-1.5 transition-colors disabled:opacity-60"
+                              >
+                                {verifyingId === (trx.transactionReference || trx._id || trx.id) ? (
+                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                ) : (
+                                  <CheckCircle className="w-3.5 h-3.5" />
+                                )}
+                                Verify Status
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => openReceiptForPayment(trx)}
+                                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg inline-flex items-center gap-1 transition-colors"
+                              >
+                                <FileText className="w-3.5 h-3.5" />
+                                View Receipt
+                              </button>
+                            )}
                           </td>
                         </tr>
                       );
